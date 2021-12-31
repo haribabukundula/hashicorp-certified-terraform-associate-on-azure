@@ -1,0 +1,1800 @@
+703147 sopra empid
+
+1172898
+spc default
+
+
+F Roming profile.user and group,create folder and share and security.open user and his properties in profile add the folder path.
+User home dir.
+GP enforcing,Block policy inheritance.if we have two ous and we desabled CP in parent ou the same policy will apply to child ou.we have to do block policy or in child ou select CP policy and disabled it.enforcing will apply last and having higest priority.
+wallpaper.
+software deployement.-assign(per user/per comp,it will be installed when user logon first),publish(one/two users,control panel).
+Folder redirection.user create folder and share and security,gpo-edit-user-policy-folder-desktop-enable it.
+map network drive:folder-share it add user in it or gpo-edit-user-wind-network drive-new-path of the folder-drive letter-share it.
+Printers.user-gpo-edit-user-preference-printer-new-create-path-port-create.(net share).
+Storage space(install file storage service)(select the disk and initialize it for both the disks,storage pools,virtual disks,volumes-D,E,etc.)
+DHCP.post installation (create DHCP ADMIN,USer,it will show under user in ad after creating.DHCP new scope,check by adding client)
+******
+password policy.  (age,number of characters,etc)
+Restricted group. (Help desk admin user in it,he unable to modify diskmgmt in clent machine eventhough he is part of admin team,gpo create
+                  edit,comp-security-restricted group add helpdesk group to administrator group.login to client machine compmgmt userand groups check administrator it will helpdeskadmin group.)
+Security filtering(gpo created lock task bar,two users and two groups,it should work for only one group not both the groups,add the group into security filtering)
+loopback processing(GP processing mode)Hr user-comp1,user1,Hr computer-comp2 user2.if user from hr user login to comp,comp2 config and user1 config will apply to that user.gpo replace mode-comp2 user2 will apply.merge mode comp2,user1,user2.
+                  edit-administrative temp-system-group-group policy loopback policy.
+GPO backup and restore:r click gpo backup.r click restore backup.if we delete gpo completely and created new one if we want restore then select "import settings" select which back up you want to restore it.
+ADC - raise domain, forest functional level first.add DC to existing domain,pwd.install from IFM media or replicate from Parent domain.ADSS-default first site-servers two dc will be there,dc1-ntds setting-rclick-check app topology,replicate now(repete it to dc2 aswell).
+         create user in dc1 it will replicate to dc2.
+Site and subnets-
+IFM(Installation from media).ntdsutil,activate instance ntds,ifm,create sysvol full e:/ifm folder(check in folder)
+site and subnets:rename the default site into main office and create subnet for that main office,site-new site-branch-default link.
+AD offile defragmentation:stop adds,,ntds-activate instance ntds ,compact to c:\compact db(folder)files-help,two options will get on screen we have to copy it and run,del old log files.integrity,semantic database analysis-go.start ADDS.
+          ofiline defra-it will create one compact version and after place that compact version into original db place.
+*****
+AD relocation:c drive-windows-ntds,create new folder e:ntds,regedit-HKEY_LOCAL_MACINE-CURRENTCONTROLSET-SERVICES-NTDS-PARAMETERS(INFO WILL BE THERE),stop adds,ntdsutil-activate instance ntds-files-move db to c:/ntds-move logs to e:/ntds,check regedit it will show new location files
+                      manually we can copy from c to e drive and make edit all the entries in regedit.
+Add server8 to existing 2003 domain-install ad-add domain to existing domain-schema 30 in 2003 after adding 2008 to 2003 domain schema will get changed into 68 in regedit.
+fsmo roles transfer:-2003 to 2008,in 2003 check U&G-rclick domain-operation master(it will show currentely hold by 2003 for fsmo roles)in 2008 server cmd-netdom query fsmo-it will show list hold by 2003 server.
+              domain.msc-rclick domain and trusts-change domain control-select2008-operation master-click change-yes.
+              schema master-run-mmc-file-addorremove snapin-(it wont show AD schema to transfer)-cmd-regsvr32 schmgmt.dll-ok.it will show ad schema now -click add-ok-rclick-ad schema-operation master-change.
+              user and computer-rclick domain-Rid-change-pdc-change-infrastructure-change.run netdom query fsmo it will 2008 list.
+seize fsmo roles:ntdsutil-roles-connections-connect to server 2k12r2-cdc02,quit,help seize infrastructure master-yes.
+disk partation:-select unallocated-rclick-new simple volume-specify size-drive letter-FS-ntfs-name etc,
+rclicl disk-extend volume-select size-ok.change drive letter.
+Folder sharing:
+sharing folder using server manager:files and storage services-shares-tasks-new share-smb share quick-create folder-selectit-share name-access base enumeration-allow caching-next-permissions add hr users-ok.
+ntfs permissions:if folder was in E drive all permissions of E drive will apply to that folder.
+
+******
+install WDS:deployement server and transport server(Select both).tools-wds-rclick-config server-next-ingreted with ad-provide folder location.open boot folder add boot.vim and add install.vim in install folder.server is ready to deploy os.
+deploy os-select network-f12-it will boot from wds.
+FSRM-file server resource manager.-create user and group add userin that group.create folder share and security add that group.tool-FSRM-File screening mgmt-file groups-r click-file group-mylab media(name)-mp3,wmv,add.
+          file screen template-r click-create-mylab-select the group what we have created-event log-send warning msg-.
+          file screens-create-path-select the group we have created-select templete we have created.
+           log on to client machine-copy mp3 files in folder.it wont work.tools-event viwer-win log-event -it will show warning msg.
+FSRM quota disk-user cannot save if quota exceeds.tools-fsrm-quota temp-new quota temp-name-des-size 100 in mb-hard quota-add warning reach 75%-ok.
+                 folder and share and security add group(user)-
+                 tools-fsrm-quota-new quota-select path folder we have created-select temp-ok.user can save only 100 mb only.
+NFS:-add roles-file storage and services-file iscsi service-add nfs-install.create folder-r click-nfs sharing-manage nfs sharing-share dis folder-permission-add-ip of client machine-ok.security -add-everyone-and permissions(without ntfs permision the linux client machine wont work even though the ipadress listed )
+     login to linux machine-cddir-mount.nfs nfsserver /dir.
+nfs manage server:(only in 2012)-nfs share ADVANCE-create custome folder or entire drive-add client ip-allow everyone-quota if we want-ok.
+                  linux-ping server-mkdir-mount.nfs servername /dir
+entriprise root certificate authority:addroles-adcertificate service-addfeatures-certificate authority and certificaty authority web environment-ok.tools-certificate authority.two ways to get certificates-iis-servername-default sites-certft-new certificate.mmc-addorremove snapin-certificate-add(right side it will go)-user cert-ok.
+                                      go to certificate authority and check it will show certificate.
+cetificate template:tools-certificate -certificate temp-rclick-manage-web server-rclcick-dublicate temp-
+iis:add roles-web server(iis).tools-iis-comp name-sites-default web site-browse.
+request ssl certificate in iis:tools-iis-servername-sites-default-browse.click on server name-right side(server certificate).action-create domain certificate-name-ou-next-mylab-finish.
+
+iscsi target:--add roles and features--file and storage--iscsi target installit.in server manager-file and storage-new iscsi virtualdisk-select e or d drive-next-it wi;;
+               show free size-select size-name of the vdisk-select existing iscsi target or new target-iscsi target name-select iscsi initators ip address-ok
+*****  
+
+
+ 
+
+
+jankins3:job maven
+           install maven plugin
+         install git and maven and env variables in jankin server.
+         git(git repo url)if it is public no credentials,but private need credentials.
+         branches to build-*/Master(code is available in that)
+         build-pom.xml
+         goals and options -clean install package
+         save.
+   
+manage jenkins -global tool config-maven-need to config maven home dir,name-maven3.5,/opt/apache-maven-3.6.1(we can config multiple versions which is required for diff projects)
+save
+
+build job now-check consol output
+
+integration-validate,compile,test,package.
+integration completed need to copy that in tomcat server.
+
+install tomcat server
+find /-name context.xml
+select mangers
+modify-allow".*"(remove every thing here)
+vi conf/tomcat-user.xml
+copy those two lines add username and pwd.
+
+go to the same job
+configure
+post build-deploy war to a contaier(deploy plugin needs to be install then only dis option will available)deploy to a contaier
+war file location **/*war
+container - tomcat8
+tomcat url
+credential
+under jenkin dashboard-credentials option -add credentials
+under tomcat-user.xml we have added users those are gui users,suppose if we want jankin server to communicate with tomcat need to add script user under tomcat-user.xml
+
+nexsus:
+
+Its a repository,need to place all the snapshot versions and final release.in pom.xml we can change the snapshot version,1.0-snapshot to 1.0,then saveand mvn deploy.
+after that we cannot perform the deploy again its final version.
+nexsus installation-download package,untar-bin-./repo.
+env variables
+nexuxip:8080/nexux create repo in nexux.
+in maven pom.xml place the code of nexus(name,urletc)..m2,in setting.xml we have to place credentials of nexus(default username:admin,pwd:admin123)
+if we do maven deploy the final war file will get stored in nexus,we can pull that war file to jankins and anisable server.
+
+maven:2--upto package
+
+git:
+1)git add,checkout,rm,mv,git push from master,git push origin branch if we are in diff branch.
+2)release branch(master)-uat-integration branch(system test)->sprint1 branch(we can create tasks in dis branch)dev people will create task branchs.
+fast track merge:after merging branch content will be same,so if we check shaven number both will same for 
+                 branches.check in HEAD folder for both the branches.
+3)git tag,git stash,git rebase,git cherry-pick(out of multiple if we need some commits),git hooks.Head,git checkout shavan number.
+   rebase--if we create a branch2 and working,meanwhile in branch1 commit happen and we need that commint in branch2
+            so  we have to run git rebase branch1,we should be in branch one.
+            but the disadvance is we will loose the history like we have created branch2 from branch1 that point.
+.net--noget,msbuild even maven also work.
+jenkins:
+1)get the code,build and compile,unit testing,automation testing,execute the static code analysis,
+deploy the artifactory/build generate to repo,delivery the artifactory/build generate to test machine.
+2).java,.class(compile),.war(package).create pom.xml(group id,version,model etc.),
+   create src/main/file name->create code in it.mvn compali(class files),mvn package(jar or war files)
+   we can see target file in src/main..mvn install->war file will copy in .m2,mvn clean-->target willdelete.
+git checkout --graph
+3)branches and test result publish and war publish..check in jenkins .jenkins(user home dir) workspace-->we can find all the project that we can run in jenkins server.
+  post build--publish junit test result.
+3a)build env:build periodically(M/30 * * * *)every 30 mins..jenkins,jobs,jobname,build we can see logs here.
+   worksapce will get created by jenkins and target will be there,because of that we will use delete workspace before buils.
+   for test results publish--target/surface-testresult/*.xml
+   archive the artifactory-->target/project name1.4 jar we have to give path in post build.
+   
+4)var/lib/jenkins/workspace/gameoflife/gameoflifeweb/target/gameoflife.war
+   need to give war to tester-->post buils actions-->archive the artifacts-->file name(gameoflifeweb/target/gameoflife.war)
+   we have to give path from pom.xml.
+   we can download the war now
+   build setup-->add buildstep-->execute shell"echo $BUILD_NUMBER" save,cp destinationlocation sourceloc.
+    2 pro)build with parameters-->new job-freestyle-general-buils paramater-add string parameter(source)-add string
+   parameter(dist).-->build setup->shell"echo $source Sdist.
+   now run buils with parameter it will ask source and distination details.
+   src=var/lib/jenkins/workspace/gameoflife/pom.xml
+   dist=var/lib/jenkins/workspace/gameoflife/test.xml
+    we can see new test.xml file
+   go to first pro-post bulds-builsother projects-give the second name,but how to give src and dist perameters?
+   so we have to download the parameterized plugin."parametirized trigger plugin"
+    post build-->project to build--2pro
+                 stabile
+                 parametirized-->src=var/lib/jenkins/workspace/gameoflife/pom.xml
+ 
+                                dist=var/lib/jenkins/workspace/gameoflife/test.xml
+4a)poll scm-->it will build any change is there.build peridocially-->it will build the job every 30 mins even if no change also.
+   plugin extenstion==hpi.sonarqube is there
+*******************************************
+5)artifactory,sonarqube,master slave.
+  jfrog-docker,yum.
+   maven-->.m2-->settings.xml place the code here.it will upload the success artifactory builds.4 out of 7.
+   jenkins-->it wont upload any artifactory until it success all the project.
+             delivery pipeline plugin.
+             artifactory plugins
+             configure system-->artifactory-->add artificatory server-->url-->useername pwd-->testconnection
+              build env-->generaic artifactor integration
+                artifactory config-->select legacy pattern-->target repo-->refresh repo(details will come select our repo)
+                   published artifactor-->**/*.war=>$(BUILD_NUMBER)
+*************************************************************************
+7)pipeline and master and slave.
+
+sonarqube:
+ for windows download sonarqube,install,cmd promt-sonarqubestart.bat,same machine maven->settigs.xml place
+  the code of sonar qube,->run maven compile,.mvn sonar:sonar
+
+sonarcube for jenkins.
+   plugin-->sonarcube plugin.
+   sonarcube runner-->provide the path for sonar
+   sonarbuildbraker plugin.
+   sonarscanner
+
+
+
+git push -u origin feature(for master branch git push is enough no need to menction branch name and origin)
+git cat-file -s shavannumber(it will show size)
+
+git origin add http://
+
+vi src/main/webapp/index.jsp
+mvn_compile:class files will generate
+mvn_test:cd jobs,cd mvn_test,ls,lsatbuildsuccess,lastbuildfailed...
+git bucket
+scm
+branch
+build triggers
+ build this when other projects are build
+ build this when code pushed to git repo
+ poll scm
+build enviromment
+  delete workspace before build starts
+pre steps
+ ececute shell
+build
+ root pom :pom.xml
+ goal and options : clean mvn-package
+build settings: email notification
+post build actions:
+
+mvn_integrate:::mvn_integrate is not required in goal.
+git publisher:
+ push only if build success
+ force push
+branch:
+  branch to push:master branch
+  target:origin
+
+
+
+maven:3
+under which user u run mvn archetype:generate,pom.xml will get stored in his user dir.
+ls -ltar
+.m2-hidden file
+cd .m2
+repo will be there,this is nothing but local repo.when we run commands first it will conect to maven centeral repo and download it to local.
+junit will get download it to local repo for doing intial unit testing.for that in pom.xml we have to place junit things.
+repo.maven.apache.org---junit repo in net.
+
+STANDALONE PROJECT:
+java -cp /home/ec2-user/sampleapp/target/sampleapp-1.0-snapshot.jar com.init6.project.app
+o/p hello world.
+
+WAR project-and deploy it in tomcat server.
+Manually-scp /src/main/index.html iptomcat /opt
+automate-copy tomcat plugin,place it in pom.xml,and create script user in tomcar server,copy script plugin and place it in 
+maven local repo(.m2,create setting.xml and place it)
+maven tomcat7:deploy
+maven tomcat:redeploy
+
+docker commit containerid centos:v1 --it will create an image from the existing container with version one,if we want
+    multiple create v2,v3..etc
+docker run -it centos:v2 /bin/bash--if we need to launch v2 image as a container.
+docker pull centos--it will download and place in our local repo.
+we have to place all the images in docker hub to avoid images loss if anything happened to host.
+docker login--
+username
+pwd
+docker push remotereponame/centos:v2
+docker commit containerid remotereponame/centos:v1--remoterepo name should be there to upload in to the dockerhub.
+we have to create docker privatehub.
+docker images
+docker ps -a
+docker ps mysql:1.1--running images
+docker attach containerid--to login to the container.
+
+bridge--default network driver
+overlay
+host
+macvlan--will assin a mac address,assume that your application will think that its a physical server.
+none
+docker network ls
+docker inspect networkid
+
+docker stop containerid
+
+when ever we creat a docker engine it will create a network(172.17.0.0/16) and gateway(172.17.0.1),
+
+docker run -d -v /localsystem(user/home/gitbucket):/root/.gitbucket -p 80:8080 techmine/gitbicket
+
+
+
+volumes:
+
+docker volumes ls
+docker run -it -v /data2 ngnix /bin/bash--creating vol and container
+df -h-same space will be available in /data2 and host data
+docker volumes ls
+multiple containers will have access to single volume.
+
+cd /data2:touch file1.file2
+docker run -it -v volname/date3 ngnix /bin/bash--
+docker volume inspect volname
+docker run -it --name firstcont -v first_cont_vol:/data4 ngnix /bin/bash
+docker volume ls
+docker volume create second_cont_vol
+docker volume ls
+docker run -it --name=second cont -v second_cont_vol(existing vol name):/data3 ngnix /bin/bash--adding existing vol to new continer
+docker container rm containerid
+
+bind mounts--link files or nas or nfs
+sharing existing file or dir to container:
+under root:root/index.html
+docker container run -dt --name ngnixbind1 -v /root/index.html:/usr/share/ngnix/html ngnix
+                                              --mount type=bind, source= ,target= 
+
+
+sharing a folder to container from host(/backup filesystem).in bind mount we can place data anywhere in the host.
+but in volumes we can store in /var/lib/docker/volumes/data3..
+mkdir ngnix_home
+cd
+vi index.html
+<h1>hello world</h>
+need to mount the dir to container:
+docker run -it --name bind-mount-container -v /root/ngnix_home/:/usr/share/ngnix/html -p 8080:80 ngnix /bin/bash
+in ngnix the default path will have for html(usr/share/ngnix/html)it will get deleted and add our path in the container.
+public ip of ec2:8080
+/etc/init.d/ngnix status
+
+
+
+**************************devops project 1****************************
+
+publish overssh:    sourece files: gameoflife-web/target/gameoflife.war
+                    remove prefix:gameoflife-web/target/
+                    remote directory://home//ansadmin//playbooks
+
+                   exec command:ansible-playbook //home//ansadmin//playbooks//copywarfile.yml
+
+
+
+[ansadmin@ip-172-31-2-225 playbooks]$ cat copywarfile.yml
+---
+ - hosts: all
+   remote_user: ansadmin
+   become: true
+   tasks:
+     - name: copy war onto tomcat servers
+       copy: src=/home/ansadmin/playbooks/gameoflife.war dest=/opt/apache-tomcat-8.5.53/webapps
+
+
+Ansible:1
+scripting:each one can write scritp in diiferent way,how to do we have to write in scripting
+Configuration:everyone should follow the same thing,what to do we have to say.
+
+ansible --push model.we can maintain light weighted server.no database,product of redhat.
+we have to write yaml and these convert into python in backend.
+	in playbook-apache should present means it will check the nodes whether the apache is there are not if not there it will
+install or it wont give any error msg.
+but in script it will give error same script if we run multiple times.
+chef--pull model.server should be highend,database.rube language.
+
+we have to enable ssl connection to server to node as a pwd less connection.
+ec2-redhat 3 image.
+yum update
+yum install epel-release --google it
+yum instal ansible
+
+download the epelrepo(wget http://d1.federaproject.org/pub/epel/epel-release-latest-7.noarch.rpm)
+rpm -ivh epel-release-latest-7.noarch.rpm
+yum install ansible
+
+Ansible:2
+create useraccount in all nodes and sudo access it
+pwd login should be enable if you are using in aws
+pwd less authintication.
+check python is installed or not in all the servers.if python is not there playbook wont work.
+
+launch two nodes.
+
+useradd ansible in all the nodes.
+
+for ubuntu-
+ubuntu is the useraccount instead of ec2-user
+CNTR+X TO COME OUT FROM VIEDITOR
+
+visudo--in all the three servers.
+ansible ALL=(ALL) NOPASSWD:ALL
+
+vi /etc/ssh/sshd_config
+password auth yes.
+.service sshd restart
+
+create key in ansible server and copy it to nodes.
+su - ansible
+ssh-keygen
+/home/ansible/.ssh/id_rsa.pub
+ssh-copy-id privatedns name
+yes
+pwd
+key added to our destination server.it will copy to under ansible user -.ssh-authorized_keys.
+i assible controler server-/home/ansible/.ssh
+we can see known_host--it cotains info about the connected node ip and other details.
+
+
+do it for second node.
+
+check python installed or not
+python
+
+inventory:
+static
+dynamic
+
+static inventory:
+/etc/ansible/hosts(here hosts is an inventory)
+vi hosts--we have to provide node info private ipaddress
+*********mynodes*******
+private dns ip details of the nodes.
+
+[webserver]
+ipaddress
+[DBserver]
+ipaddress
+
+config file for ansible:
+ansible.cfg
+
+adoce cmds:
+
+ansible -m ping all
+ansible -m ping webserver--it will ping only websers nodes in the webserver group.
+
+
+cp hosts myinventory(if we want seperate inventory,default is host)
+ansible -i myinventory(inventory,copied from hosts(hosts is an default inventory)) -m "name=hari password=india123" -b database(database group)
+we have to specify -i for to choose inventory other wise it take default inventory.
+it will create username and pwd in the databe nodes under myinventory.
+
+ansible:3
+
+core components of ansible:
+inventories--static(/etc/ansible/hosts,manually collecting host info) and dynamic(we have to collect host info by using python)
+modules:are work like a cmds,we have to use module to perform any task.ex:ping
+plays :each plays uses module
+and playbooks:contains plays,means multiple module
+config files:ect/ansable/ansible.cfg
+ansable vaults:how to maintain secrets,with help of vaults.dont want to see playbooks by others,we have to use encription.
+roles:
+variables:variables for repeated tasks,name and value etc.
+
+subline.text
+
+---
+ Name: hari
+ Address: hyd
+ mobile: 123(we are not giving - because we are getting info for one user,if we need multiple we have to give -)
+
+ex:for multiple users.
+---
+- Name: hari
+  address: hhh
+  mobile: 123
+
+
+
+- Name: hari
+  address: jj
+  mobile: 456
+
+need to get vehical info:
+---
+- Name: hari
+  address: hhh
+  mobile: 123
+  vehical:(having multiple vehicals so it will became child)
+   - maruthi
+   - creta
+
+- Name: hari
+  address: jj
+  mobile: 456
+  vehical:
+   - "honda baleno"
+
+
+yaml lint is a validator to validate.
+
+ex2:
+---
+ theathers:
+  - name: pvr
+    movies:
+     - A
+     - B
+   showtimes:
+    - 11am
+    - 2pm
+  - name: inox
+     movies:
+     - A
+     - B
+   showtimes:
+    - 11am
+    - 2pm
+
+playbook for ping:
+
+---
+ - hosts(static inventory):all
+   tasks:
+    - name: ping the nodes
+      ping:(dis module will go and install in the remote server once done it will delete.)
+
+mkdir playbook
+cd
+vi playbook.yml
+
+ansible-playbook playbook.yml--execute the playbook
+
+playbook for http:
+
+[ansadmin@ip-172-31-2-225 playbooks]$ vi packagee.yml
+---
+- hosts: all
+  remote_user: ansadmin
+  become: true
+  tasks:
+  - name: install tomcat
+    yum:
+      name: tomcat
+      state: present
+    notify:
+      - start tomcat
+  handlers:
+    - name: start tomcat
+      service:
+        name: tomcat
+        state: started
+
+
+vi http.yml
+ansible-playbook http.yml
+
+ansible:4
+Roles:
+suppose we have to install webserver in centos and redhat.
+need to create two playbooks.
+to avoid dis we have to use roles.
+roles having some structure:
+
+
+**********************roles*****************************
+
+
+defaults  files  handlers  meta  README.md  tasks  templates  tests  vars
+[ansadmin@ip-172-31-2-225 rolename]$ cd tasks
+[ansadmin@ip-172-31-2-225 tasks]$ ls
+hariuser.yml  main.yml  package.yml
+[ansadmin@ip-172-31-2-225 tasks]$ cat package.yml
+- name: install tomcat
+  yum:
+    name: tomcat
+    state: present
+  notify:
+    - name: restart tomcat
+[ansadmin@ip-172-31-2-225 tasks]$ cat hariuser.yml
+- name: install htttp
+  user:
+    name: hariuser
+    state: present
+[ansadmin@ip-172-31-2-225 tasks]$ cat main.yml
+---
+# tasks file for rolename
+- import_tasks: package.yml
+- import_tasks: hariuser.yml
+
+
+defaults  files  handlers  meta  README.md  tasks  templates  tests  vars
+[ansadmin@ip-172-31-2-225 rolename]$ cd handlers
+[ansadmin@ip-172-31-2-225 handlers]$ ls
+main.yml
+[ansadmin@ip-172-31-2-225 handlers]$ cat main.yml
+---
+# handlers file for rolename
+- name: restart tomcat
+  service:
+    name: tomcat
+    state: started
+[ansadmin@ip-172-31-2-225 handlers]$
+
+[ansadmin@ip-172-31-2-225 playbooks]$ ls
+firstrole.yml  packagee.yml  packages.yml  playbook.yml  rolename  roleuser.yml  useradd.yml
+[ansadmin@ip-172-31-2-225 playbooks]$ cat firstrole.yml
+- hosts: all
+  remote_user: ansadmin
+  become: true
+  roles:
+   - rolename
+[ansadmin@ip-172-31-2-225 playbooks]$
+
+****************
+using variables in roles:
+under vars main.yml
+---
+packagename: tomcat7
+
+modify the handlers and  package.yml file as 
+
+# handlers file for rolename
+- name: restart tomcat
+  service:
+    name: "{{ packagename }}"
+    state: started
+[ansadmin@ip-172-31-2-225 handlers]$ cd ..
+[ansadmin@ip-172-31-2-225 rolename]$ ls
+defaults  files  handlers  meta  README.md  tasks  templates  tests  vars
+[ansadmin@ip-172-31-2-225 rolename]$ cd tasks
+[ansadmin@ip-172-31-2-225 tasks]$ ls
+hariuser.yml  main.yml  package.yml
+[ansadmin@ip-172-31-2-225 tasks]$ cat package.yml
+- name: install tomcat
+  yum:
+    name: "{{ packagename }}"
+    state: present
+  notify:
+    - name: restart tomcat
+
+
+***************************************end roles**************************************************
+
+
+ansible-galaxiy init rolename
+
+https://galaxy.ansible.com.
+searech
+ngnix
+
+click ngnix---copy role.(default roles)
+su ansible
+mkdir roles
+ansible-galaxy install grrelinguy.ngnix(copied cmd) /home/ansible/roles
+ls -ltr
+cd.ansible
+we can see grrelinguy.ngnix
+cd
+ls
+we can see,licences,handlers,var,meta,tasks,templets,etc...
+cd handlers
+ls -ltr
+main.yml
+cat main.yml
+cd ../tasks
+check everything
+
+our role-create useraccount and install software
+cd roles
+anasible-galaxt init rolename /home/ansible/roles
+cd rolename
+ls -ltr
+dir structure
+
+cd ../tasks
+ls
+main.yml
+vi ngnix.yml
+- name: install a list of package
+  yum:
+   name: "{{ package }}"
+   state:present
+  vars:
+   packages:
+    - tree
+    - ngnix
+-name : staRT NGNIX
+  service:
+   name: ngnix
+   start: started
+wq!
+
+another task
+
+vi user.yml
+
+-name: "creating user account"
+ user:
+ name: "{{ item }}"
+ password: "123"
+ state: present or absent
+ shell: /bin/bash
+ home: /home/"{{ item}}"
+
+with_item:["git","nano"]
+ - hari
+ - babu
+wq!
+
+
+
+
+---
+-
+  become: true
+  become_method: sudo
+  connection: ssh
+  gather_facts: false
+  hosts: all
+  remote_user: ansadmin
+  tasks:
+    -
+      name: "Add user \"user\" to remote server"
+      user:
+        comment: "Privileged User"
+        generate_ssh_key: true
+        home: "/home/{{ item }}"
+        name: "{{ item }}"
+        shell: /bin/bash
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+      with_items:
+        - gituser
+        - testuser
+        - testuser1
+
+["tree","wget"]
+
+
+
+ user:
+       name: sysadmin
+       comment: "Privileged User"
+       uid: 2001
+       group: nixadmins
+       groups: office,warehouse
+       append: yes
+       shell: /bin/bash
+       generate_ssh_key: yes
+       ssh_key_bits: 2048
+       ssh_key_file: .ssh/id_rsa
+
+
+
+we have to import the task inside the main.yml
+vi main.yml
+- import_tasks: user.yml
+- import_tasks: ngnix.yml
+
+now we have to create playbook
+ls -ltr
+playbooks
+roles
+******************************
+- hosts: all
+  remote_user: ansadmin
+  become: true
+  roles:
+   - rolename
+
+- name: install htttp
+  yum:
+    name: tree
+    state: present
+[ansadmin@ip-172-31-2-225 tasks]$ cat hariuser.yml
+- name: install htttp
+  user:
+    name: hariuser
+    state: present
+*******************************
+
+cd playbooks
+
+vi nignixrole.yml
+---
+ -hosts: webserver
+  become: true
+  gather_facts: true
+  roles:
+   - rolename(what we have created earlier)
+
+ansible-playbook ngnix.yml --check
+
+mv /home/ansible/roles/rolename /home/ansible/.ansible/roles
+
+
+
+only when some event or status change occur.
+notify
+handler.
+************************************
+ansible install:
+rhel8
+python --version
+yum install python3 -y
+python3 --version
+alternatives --set python /usr/bin/python3(this is for if we type python --version it wont giveresults,
+since we have installed python3,to avoid this we have to run alternatives command)
+python --version
+yum -y install python3-pip
+useradd ansadmin
+pwd
+visudo (shift g and o)
+vi /etc/ssh/sshd_config--password auth= yes
+service sshd reload
+su ansadmin
+pip3 install ansible --user(take ansadmin as a user)
+ansible --version
+config file=none(older version it should be there but rhel8 onwards we have to create)
+mkdir /etc/ansible
+cd ansible
+vi hosts
+localhost(as of now we dont have clints so we are menctioned the localhost as a client)
+ssh-keygen
+ssh-copy-id localhost(since it is a same host also we have to copy the key)
+ansible all -m ping
+ssh-copy-id ansible@hostname(client machine)privatedns.
+ssh hostname -->we can login with out pwd.
+video4:
+ansible:ansible installation in client.
+identify macine
+python install
+pwdless authintication
+user ansible
+visudo
+
+inventories--statis or dynamics
+modules--yum,apt,copy,ping etc...
+variables--allows us to customize behavior systems,var can be defined in inventory or playbooks,ex:dest={{ remote_path }}
+facts--when ever we are pushing to client it will collect details of client ,,like free space,hostnameetc..
+playbooks and plays
+config files--etc/ansible/ansible.cfg
+templete--combination of static and dynamic things..if we want to pass some data and the data is dynamic we have to use templets.
+handlers--
+roles--
+vault--
+
+visual studio
+
+/etc/ansible/hosts
+cp hosts hosts.org
+cd hosts--add client machines private dns. we can create groups as well
+ansible -m ping all
+[groupname]
+hostnames
+
+ansible -m ping -i /etc/ansible/host.org all or groupname
+ssh-copy-id ansible@localhost
+
+video5:
+su ansible
+cp /etc/ansible/hosts ~
+mv hosts myinv
+add clint name in myinv
+ansible -m ping -i myinv all
+
+yml converter
+
+video6:
+playbook for http:
+---
+- hosts: ubuntu
+  remote_user: ansible--remote user is ansible.
+  become: true
+  tasks:
+  - name: install htttp
+    yum:
+      name: http
+      state: present(it will check package is available or not,if not install)
+      update_cache: yes-->updating repo
+  - name: start and enable http
+     service:
+      name: http
+      state: start
+      enabled:true
+
+ansible-playbook http.yml -K
+pwd we have to give
+
+video7:
+su ansible
+cd ~
+cd playbooks
+
+user:
+ name: hari
+ state: present
+ pwd: 123
+
+-name: remove dir
+ command: "rm -rf/var/logs"
+ tags:  
+  - prep
+
+adhoc cmd:ansible -m command  -vvv -a "cat /etc/mod" dbderver-->-a is argumrnts.
+ansible -m setup dbserver-->it will get all the facts for dbserver.
+gather_facts: no-->default is yes,if no playbook exection is fast.
+
+copy:
+ src:
+ dest:
+
+get_url:
+ url:
+ dest:
+
+if we have redhat and ubuntu combination server need to install package on both ,check by setup module for details.
+ansible -m setup -a "filter=ansible_os*" ubuntu(groupname)
+
+conditions we have to use it.
+---
+- hosts: all
+  become: yes
+tasks:
+-name: redhat
+yum:   
+ name: http
+ state: present
+ when: ansible_os_family == "redhat"-->condition
+service:
+ name: http
+ state: started
+-name: ubuntu
+apt:
+ name: http
+ state: present
+when: ansible_os_family == "debian" 
+service:
+ name: http
+ state: started
+
+video8:handlers
+
+  ---
+- hosts: all
+  become: yes
+tasks:
+-name: redhat
+yum:   
+ name: http
+ state: present
+notify: restart tom
+
+hadlers:
+-name: restart tom
+ services:
+  name: tomcat
+  state: started
+
+variables:
+cd playbooks
+cp /etc/ansible/hosts .
+we have copied our inventory file in playbooks dir now create 
+mkdir group_vars
+cd group_vars
+vi  ubuntu(existing group in host file)
+---
+packagename: tomcat7
+
+
+tomcat7.yml
+---
+- hosts: ubuntu
+  become: yes
+  tasks:
+  -name: redhat
+   yum:   
+    name: "{{ packagename }}"
+    state: present
+   notify: restart tom
+   - copy:
+      src: /etc/ansible/myinc
+      dest: "{{ destcopy }}"
+    notify: restart tom
+    hadlers:
+    -name: restart tom
+     services:
+     name: "{{ packagename }}"
+     state: restarted
+
+ansible-playbook -K -i hosts tomcat7.yml
+
+mkdir host_vars
+cd
+vi hostname(ubuntu hostname which is part of ubuntu group)
+---
+destcopy: /home/ansible/filefromhostvar
+
+if we run this playbook copy module will execute  two times once in ubuntu group_vars and one in host_vars.
+but priority will have for host_vars 
+
+video8:templetes
+
+templete.yml
+---
+- hosts: ubuntu
+  become: yes
+  tasks:
+-name: static data copying 
+templete:
+src: 
+dest:
+
+if we run dis yml in clints in src file under ansible_hostname variable replaced by client hostname.
+- hosts: ubuntu
+  become: yes
+  tasks:
+-name: first temp task
+templete:
+src: in source file place {{ ansible_hostname }},these are fact we have to collect at ansible -m setup -a ubuntu(groupname),,first.j2-->file name,jinja2 templete
+dest:
+
+login to client machin and check hostname will be there file.
+
+
+---
+- host: all
+tasks:
+ -name: basic cmd
+  command: hostname -f
+  register: cmd_content
+ -name: displaying content
+  debug:
+    msg: "{{ cmd_content.stdout }}"
+
+
+***package installation***
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: install utilities
+    yum:
+      name: "{{ item }}"
+      state: present
+    with_items: ["tree","wget"]
+
+
+
+ 
+
+
+
+
+
+
+
+
+*****************************************
+Kubernets:free tire wont work for kubernets master 2 cpus required.centos for real time in demo env.
+for prod redhat we will get support.
+launch centos7 for master.aws market place
+6443,2379-2380,10250,10251,10252--allow these custome,tcp port.
+two ec2 for clents.centos 7 
+master-yum install -y update.
+yum install -y doceker
+systemctl docker enable
+systemctl start docker
+selinux disabled.
+systemctl stop firewall or firewalld
+iptables -L
+swapoff -a
+we have to update systemctl settings the kernel parameters as 1,
+cat>>/etc/systectl.d/kubernets.conf>>EOF
+net.bridge.bridge-nf-call-ip6tables=1
+net.bridge.bridge-nf-call-iptables=1
+EOF
+systemctl --system
+(or)
+modprobe br_netfilter
+echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+The br_netfilter module is required for kubernetes installation.
+ Enable this kernel module so that the packets traversing the bridge are processed by iptables 
+ for filtering and for port forwarding, and the kubernetes pods across the cluster can communicate with each other.
+
+install kubernets:
+
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+        https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+yum install -y kubelet kubeadm kubectl
+
+systemctl start docker && systemctl enable docker
+systemctl start kubelet && systemctl enable kubelet
+
+kubeadm init --apiserver-advertise-address=10.0.15.10(master server ip) --pod-network-cidr=10.244.0.0/16-->root user
+
+useradd kubeuser
+mkdir /home/kubeuser/.kube
+sudo cp -i /etc/kubernets/admin.conf /home/kubeuser/.kube/config
+sudo chown -R kuneruser:kuberuser home/kubeuser/.kube/config
+
+we have to run dis cmd as a cubeuser
+deploy the flannel network
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+vi kube-flannel.yml--change the network range in this file if it is not 10.244.0.0
+
+Workernode:yum install -y update
+yum install docker
+systemctl enable docker
+system start docker
+selinux disable
+firewall
+swapoff
+kernel parameters
+repo for kubernets
+install cubelet cubectl cubeadm
+kube join command
+as a kube user:kubectl get nodes
+***********************************
+
+master-su kubeuser
+kubectl get nodes
+kubectl gety pods --all-namespaces-->it will show all the pods like network pods,ectc pod,apiserver pod all the componets will be creates as a pods.
+follow the same steps for workernode2.
+
+yum update
+yum install docker
+systemctl start docker
+selinux
+firewall
+swapoff -a
+changing the kernel parameters
+repo for kubernets
+install kubectl kubelet kubeadm
+enable start kubectl
+join to master.
+
+kubectl get nodes--it should be in ready state
+kubectl get pods
+kubectl run nginx(name) --image=nginx --port=80 --replicas=3(it will create threee replica one in one client 
+and two in one client)
+kubectl get pods
+kubectl get pods -o wide
+
+kubectl get deployement(it will give info)
+
+lables:
+kubectl label pod podname env=demo 
+kubectl get pods--we will get pods names.
+kubectl get pods --show-lables
+kubectl delete pods podname(it will delete pod but we menction replicas three so again it will create automatically)
+we need to delete complete deployement.
+kubectl get deployement
+kubectl delete deployements ngnix
+kubectl describe pods podname
+9952054840
+kubectl create deployment nginx --image=nginx
+kubectl describe deployment nginx
+kubectl create service nodeport nginx --tcp=80:80
+
+kubectl run nginx --image=nginx
+kubectl expose deployement nginx --port=80 --targetport=80 --type=nodeport
+kubectl scale --replicas=3 deployment nginx-deployment
+*********************************
+9952054840
+using deployement also we can launch pods,but in deployement if any app upgrade we no need to bring it down but while using 
+run to launch pods it should be down for any app upgrade.
+
+to access pods from outside the world we have to use "service".
+it will have clusterip,nodeport,loadbalancer
+
+cluster ip:if we have three app pods in one node and three db pods in one node,all the app pods will comminicate with db pods
+if one of the db pods is down and created new one based on the replica,but the ip will get changed in that case the app pod
+will not do communicate with that db pod.
+so to avoid the problem we have to configure cluster ip,cluster ip will be places between the app and db pods,if db pod ip 
+cnaged also no problem app pod will communucate based on the cluster ip.privateip
+
+nodeport:through this we can access the pod,, publicip
+loadbalancer:on top of the three pods loadbalancer ip will there,load will split across the three nodes.required external functionality from cloud,hyperviser,host upon which the 
+kunerneties installed.
+
+crete deployement:
+vi ngnix-deployement.yml
+run as a kubeuse
+kubectl apply -f ngnix-deployement.yml
+
+vi service.yml--to access the pod via internet need to write yml.
+kubectl apply -f service.yml
+kubectl get svc -L app=ngnix.app
+kubectl describe service my-service
+
+apiVersion: v1
+kind: Service
+metadata:
+ name: nginx-svc
+ labels:
+  app: ngnix
+spec:
+ selector:
+  app: nginx
+ type: NodePort
+ ports:
+ - nodePort: 30080
+   port: 80
+   targetport: 80
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: ngnix
+spec:
+  replicas: 4
+  selector:
+    matchlabels:
+     app: ngnix
+  template:
+    metadata:
+      labels:
+        app: nginx
+   spec:
+      containers:
+      - name: nginx-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+pods are ephemeral and stateless initially.
+
+kubectl get deploy -l app=ngnix
+kubectl get rs(replicaset) -l app: ngnix(when we create a deployement in backend a replicaset will get created)
+kubectl get po -l app=ngnix
+kubectl describe deploy ninix-deployement
+update:(set,edit)
+
+****************************
+daemonset:it will run one pod in each worker node(only one copy)if new node added pod will created in it.
+
+node monitoring:collected
+log collection:fluented
+storagedeamon:ceph
+***************************
+apiVersion:apps/v1
+kind: daemonset
+metadata:
+  name: fluented
+spec:
+  templete:
+   metadata:
+    labels:
+     app: fluented
+   spec:
+    container:
+    - name: fluenterd
+      image: 
+   selector:
+    matchlabels:
+      app: fluented   
+
+
+pods:-pod is a automic unit of scheduling.
+interpod:container in diff pods will communicates based on flannel newtwork,we specified pods network here.
+intrapod:two containers in one pod,will communicate based on localhost network
+
+apiversion: v1
+kind: pod
+metadata:
+  name: ngnix-pod
+  labels:(labels are used logically group all the related pods together for displaying and managing )
+    app: ngnix
+    tier: dev
+spec:
+  containers:
+  - name: ngnix-container
+     image: ngnix
+kubect create -f ngnix-pod.yml
+kubectl get pods
+kubectl get pods -o wide(we can see ipaddress of pod and on which worker node it is running.)
+kubectl get pods -o yaml | more(if we lost our yml file but we have a pod we can get the yml by this cmd)
+kubectl describe pod podname
+
+kubectl exec ngnix-pod -it  /bin/sh(login to the container)
+in usr/share/ngnix/html/test.html(place some date here)
+exit
+
+kubectl expose pod ngnix-pod --type=nodeport --port=80
+kubectl describe svc nignix-pod(we can see node port id )
+
+workernodeexternalip:nodeportid(over web)
+if app is running in workernode one,we can take worker node two ip and acces the same app,even master also work.but node port id is same for all the workernodes.
+
+internally cluster:
+
+kubectl describe svc nignix-pod(find endpoint ip)
+endpoint ip
+curl http://endpoint ip
+
+all the workernodes it will work.
+************************************************
+configmaps: is used to store date,and it will attach it to container by using volumes or env,,in configmaps it will display data when kubectl get configdata cinfigdataname -o yaml.and also in describe cmd.
+but in secrets it wont diplay data.
+
+create two files,file1 and file2.
+
+kubectl create configmaps ngnix-config-vol --from-file=file1 --from-file=file2
+kubectl get configmaps ngnix-config-vol
+kubectl describe configmaps ngnix-config-vol
+kubectl get configmaps config-ngnix-vol -o yaml
+
+version:v1
+kind: pod
+metadata:
+  name: ngnix-config-pod
+spec:
+  containers:
+   -name: ngnix container
+    image: ngnix
+    volumemounts:
+     -name:test-vol
+      mountpath: "/etc/nonsencitive-data"
+      readonly: true
+  volumes:
+   -name: test-vol
+    configmaps:
+     name: config-ngnix-vol
+     items:
+     - key: file1.txt
+       path: filea.txt
+     - key: file2.txt
+       path: fileb.txt
+
+literalvalues:
+kubectl create configmap redis-config-env --from-literal=file1=filea --from-literal=file2=fileb(key=value)
+
+version:v1
+kind: pod
+metadata:
+  name: redis-config-pod
+spec:
+  containers:
+   -name: redis container
+    image: redis
+    env:
+     -name: file-1
+      valuefrom:
+       configmapkeyref:
+        name: redis-config-env
+        key: file1
+      -name: file-2
+      valuefrom:
+       configmapkeyref:
+        name: redis-config-env
+        key: file2
+  restartpolicy: never
+
+login to container env | grep file,we can see filea and fileb
+***********************************
+secrets:
+create two files username.txt,pwd.txt
+
+kubectl create secret generic ngnix-secret-vol --from-file=username.txt --from-file=pwd.txt
+kubectl get secret
+kubectl describe secret ngnix-secret-vol
+
+version: v1
+kind: pod
+metadata:
+ name: ngnix-secret-vol
+spec:
+ containers:
+  -name: ngnix-secret-vol
+   image: ngnix
+ volumemounts:
+  -name: test-vol
+   mountpath: "/etc/secretkeys"
+   readonly: true
+volumes:
+ -name: secret-vol
+  secrets:
+   name: ngnix-secret-vol
+   
+
+kunectl exec ngnix-secret-vol cat/etc/secretkeys/username.txt
+
+
+env:
+
+
+version:v1
+kind: secret
+metadata:
+  name: redis-secret-pod
+type: opaque
+data:
+ username: jari
+ password: dfghrt343
+
+echo -n 'admin' | base64--->jari
+echo -n 'password' | base64--->dfghrt343
+
+encode the admin and password through base64 and place it in yaml as manually.
+
+version:v1
+kind: pod
+metadata:
+  name: redis-secret-pod-env
+spec:
+  containers:
+   -name: redis container
+    image: redis
+    env:
+     -name: secret username
+      valuefrom:
+       secretkeyref:
+        name: redis-secret-pod
+        key: username
+      -name: secret pwd
+      valuefrom:
+       secretkeyref:
+        name: redis-secret-pod
+        key: password
+  restartpolicy: never
+
+login pod and check env | grep SEC-->we can see decoded username and pwd.
+
+***********************************8
+replication controller:it will maintain desired number of pods all the time, if repicas=3.it will maintain 3 pods all the time.
+                        how RC will know about pods are running, based on the labels it will maintain
+                        RC--old-->equality based selector,,= == !=,,env = prod,,tier != frontend,,use in service,rc
+                        replicaset--new one,-->set based selector,,in notin exists,,ex:env in (prod,qa),tier notin (frontend,backend),,use in RS,jobs,deploye,daemonset
+
+apiVersion: v1
+kind: ReplicationController 
+metadata:
+   name: ngnix-rc 
+spec:
+   replicas: 3
+   selector:
+    app: ngnix-app
+
+   template:
+      metadata:
+         name: ngnix-pod
+      labels:
+         app: ngnix-app
+         env: prod
+      spec:
+         containers:
+         - name: ngnix-container 
+         image: ngnix
+         ports:
+            - containerPort: 80
+
+kubectl get po -L app=ngnix-app
+kubectl get po -L env=prod
+kubectl scale rc ngnix-rc --replica=5
+kubectl get rc ngnic-rc
+
+********************
+replicaset:it will maintain desired number of pods all the time, if repicas=3.it will maintain 3 pods all the time.
+          
+
+
+apiVersion: apps/v1
+kind: Replicaset
+metadata:
+   name: ngnix-rs
+spec:
+   replicas: 3
+   selector:
+   matchlabels:
+     app: ngnix-app
+   matchexpression:
+     - {key: tier, operator: in, value: [frontend]}
+
+   template:
+      metadata:
+         name: ngnix-pod
+      labels:
+         app: ngnix-app
+         tier: frontend
+      spec:
+         containers:
+         - name: ngnix-container 
+         image: ngnix
+         ports:
+            - containerPort: 80 
+
+we can use matchlabes if we have one value,matchlabes will be used in RS,jobs,deployement,daemonset.
+
+kubectl get pods -L tier=frontend
+kubectl scale rs ngnix-rs --replica=5
+kubectl describe rs ngnix-rs
+***********************************
+deployement:upgrade app v1 to v2,upgrade with zero downtime,upgrade sequencely one after other,pause and resume upgrade process,rollback upgrade...
+            deployement is a controller like,rc,rs etc....
+            replicaset cannot provide upgrade and rollback....
+     deployment types:: 
+
+     recreate:downtime will be there,
+     rollingupdate:this is default strategy in kubernets.
+     canary: testing
+     blue/green:loadbalancer
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+  labels:
+    app: ngnix-app
+spec:
+  replicas: 4
+  selector:
+    matchlabels:
+     app: ngnix-app
+  template:
+    metadata:
+      labels:
+        app: nginx
+   spec:
+      containers:
+      - name: nginx-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+kubectl get deploy -L app=ngnix-app
+kubctl get rs -L app=ngnix-app(in backend rs will get created when we create deployement)
+kubectl get po -L app=ngnix-app
+kubectl describe deploy ngnix-deploy
+kubcectl set image deploy ngnix-deploy ngnix-container=ngnix1.9.1
+kubectl edit deploy ngnix-deploy(vi editor will open modify and close it as soon as we close it will update.)check status with rollout cmd.
+kubectl rollout status deployement/ngnix-deploy(we can see ngnix-deployement rollout successfully.)
+kubectl get deploy
+
+rollback:
+kubectl set image deploy ngnix-deployement ngnix-container=ngnix:1.91 --record(accedentely given 1.91)
+kubectl rollout status deployement/ngnix-deployement(we can see error)
+kubectl rollout history deployement/ngnix-deployement(we can notice the error we have to undo it)
+kubectl rollout undo deployement/ngnix-deployement
+kubectl rollout status deployement/ngnix-deployement(now its back to its original status.)
+
+scale up and down:
+kubectl scale --replicas=3 deployment nginx-deployment
+*************************
+jobs:run to complete (jobs)and scheduling(cron jobs) for backup on specific time,once job complete pod will get terminated.
+
+apiversion: batch/v1
+kind: jobs
+metadata:
+  name: jobs-pod
+spec:
+  template:
+   metadata:
+     name: jobs-pods
+  containers:
+   - name: jobs-podss
+     image: ngnix
+     command:
+     - "bin/bash"
+     - "c"
+     - "ps -aef"
+   restartpolicy: never
+*************************
+nodeport:
+
+192.18.2.2:30000-32767-->nodeip and nodeport
+
+10.2.2.2:80-->serviceip and port
+   (selector:app: vvv)
+10.2.3.4:80-->podip and target port
+   (label: app: vvv)
+port and target port are same.
+
+loadbalancer:
+kubectl get service -L app=ngnix-app
+  we can see external ip cloud providers will generate public ip for us.
+
+clusterip:
+
+
+
+
+velloreashwin1991
+Qwerty@01
+sathishnear2u
+Victory@123
+
+
+git->jenkins->ansible->tomcat.
+1.deploying war in tomcat through ansible,create user(ansadmin),visudo.in tomcat useradd,visudo.in ansible su -user,
+ssh-keygen,copy-id-ssh ip,etc/ansible/hosts(tom ip) 
+and enable pwdless auth between ansible and tomcat.test:ansible -m ping all,ssh tom ip
+cd opt,cd playbooks,
+vi copyfile.yml
+---
+ - hosts: webapps
+   become: true
+   tasks:
+     - name: copy file from ansible to tom
+       copy:
+         src: /opt/playbook/webapp/target/webapps.war
+         dest: /opt/apache1.3.2/webapps
+
+2.publish over ssh-jenkins,from jenkins we want to execute playbooks.system config-ssh server-add-
+ansible_server,privateip(ansible),username(ansadmin),pwd,test connecction.
+
+4.modify the jenkin job to copy and initiate ansible playbook.
+once ci complete in post build,select send files or ececute commands over ssh.ansible_server(we have created)
+provide src (webabb/target/*.war)and target path(//opt//playbooks).
+exec cmd:ansible-playbook /opt/playbooks(location where the playbook exist) copyfile.yml--execute playbook.
+*********************************************
+
+***********************************
+jenkins to docker:
+ec2 docker,yum install docker,
+service docker status,
+user add dockeradmin,pwd,
+usermod -aG docker(a group get created if we install docker) dockeradmin.
+mkdir /opt/docker
+cd .opt,mkdir docker,cd,
+vi Dockerfile{
+from tomcat:8-jre8
+copy ./webapp.war /usr/local/tomcat/webapps
+},
+jenkin-configure system-publish over ssh,add,private ip docker,docker_host (name),dockeradmin(username),adv->pwd.test connection
+vi /etc/ssh/sshd-config->pwd base in docker server.
+service sshd restart
+job in jenkins,git,cleaninstall package,select send files or ececute commands over ssh.choose docker_host,provide src (webapp/target/*.war)and target path
+//opt//docker
+remove prifix:webapp/target
+exec cmds:
+
+add one more ssh over:docker container.-->docker run -d --name valaxy_demo -p 8090:8080 valaxy_demo
+
+docker will communicate the outside world because of this DNAT and MASQUERADE
+iptables -t NAT -L postrouting
+DNAT
+MASQUERADE
+icc=false
+
+
+
+docker swam:
+1.13 or higher
+one machine docker swam manager and two worker nodes.
+docker machine --help
+docker swarm init --advertise-addr <MANAGER-IP>
+docker node ls
+docker info
+docker swarm join-token--we will get join command as below.
+docker swarm join --token SWMTKN-1-3l50pb6ko5ci23134wzt17gqkb4nsbv4e52ciwdwq80hmmx1si-d3kv6s6qtgf0crqmz9dxix2oc 10.140.0.2:2377--run it in worker node
+
+docker service create --replica 3 -p 80:80 --name webapp nginx
+docker service create --name antivirus --mode global -dt ubuntu(one task in  all nodes,it will get created in all the nodes whenever a new node added into the cluster)
+docker service create --name myservices --mount type=volume, source=myvolume,target=/mypath ngnix
+
+docker service ls
+docker service ps servicename(webapp)
+
+docker macine ls
+take the ip and browse--check for all the three nodes.
+
+docker service scale servicename=4 servicename=3(if we have multiple services.)
+docker service update --replica 5 servicename(webapp)(not possible to scale multiple services at a time)
+
+docker serive ls--we can see four services
+containers can run in manager as well.
+
+docker node inspect worker1
+docker node inspect self
+
+docker service update --image nginx:1.1 servicename(webapp)
+
+docker service ps webapp--check for version update for nginx
+
+docker node update --availability drain worker1--stop worker node1
+docker node update --availability active worker1--active worker node1
+
+docker service rm servicename(webapp)
+
+docker swam leave -- workernode and master
+docker-machine stop machinename(worker1)
+docker-machine rm machinename
+
+stack:containers can run across workers nodes.can be used to manage a multi service application.
+compose:containers can run in only one worker node.
+
+docker stack deploy --compose-file docker-compose.yml mydemo
+docker stack ps mydemo
+docker stack rm mydemo
+docker stack rm swam_name--removing swam
+docker stack service service_name--see running services.
+docker service logs stack_name service_name--to see logs
+docker system prune--to remove images not used by containers.
+
+docker create -name container_name image:tag--to create container without run.
+
+docker pull image:tag
+
+docker compose:
+A specified webserver might have multiple containers that have required at the build process.-->stack
+tool for to defining and running multi-container docker application.
+docker-compose -v
+pip install -U docker-compose
+mkdir dockercomposefile-->we can create it anywhere
+cd dockercomposefile
+touch docker-compose.yml
+vi docker-compose.yml
+
+version: '3'
+service:
+  web:
+   image: nginx
+   ports:
+   - 9090:80/tcp
+  database:
+    image: redis
+
+docker-compose config-->check the validity of the file
+docker-compose up -d -->to run the docker compose file
+docker ps
+docker-compose down
+browser: localhost:9090-->nginx will open
+docker-compose up -d --scale database=4
+docker ps-->we can see one web and four DB
+
+
+nagios:
+
+host
+hostgroup-->linux machines etc
+contact 
+contactgroup-->admin,managers group
+command
+
+active-->server will check with client to get deatils.
+passive-->client will check its self and send it to server,upload the results to nagios.
+
+installation:nagios3 we have a packages now no packages..
+download the code and build it ,, from nagios4 onwards.
+
+
+we have to install php(dynamic web content),httpd(to monitor the web apps),nrpe
+
+yum install nagios nagios-plugin-all nrpe
+/etc/nagios/ngs.cnf--add monitor server details.
+
+
+
+
+
+compile
+test
+package
+build pipeline view
+build peridoically
+poll scm--load will be in jenkins server because all the time it will pull and compare the code from local to remote if any change it will build the jobs
+web hooks
+distributed architecture
+windows node-->slave to the master through tcp protocal.(launch agent by connecting it to the master)
+linux node
+
+pipeline{
+    tools{
+         jdk "myjava"
+         maven "mymaven"
+        }
+    agent none
+    stages{
+        stage(checkout){
+           agent any
+           steps{
+               git "url"
+                 }
+        stage(compile){
+           agent any
+           steps{
+               sh "mvn compile"
+                 }
+
+ 
+
+
+*****************************************************
+Docker Installation Steps:
+
+sudo yum check-update
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+sudo yum-config-manager --add-repo https://download.docker.com/linux/cen...
+sudo yum install docker
+sudo systemctl start docker
+sudo systemctl enable docker
+
+Part 2 - SonarQube Installation on Docker Container
+
+- SonarQube installation in Docker container
+- Configuration and setting up Azure DevOps repositories in SonarQube
+
+Docker Commands:
+
+sudo docker pull sonarqube:latest
+sudo docker run -d —name SonarQube -p 9000:9000 sonarqube:latest
+
+Part 3 - Azure DevOps || Maven Build || SonarScanner
+
+- Build pipeline creation
+- Integrating JAVA demo code with Maven build
+- Running code scanner task in build
+- Analyzing code defects in SonarQube dashboard
+
+clone the Java demo code from GITLAB:
+git clone https://gitlab.com/rohit.kumar.singh0...
+****************************************************************************
+
+
